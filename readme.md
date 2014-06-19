@@ -1,4 +1,4 @@
-##markitondemand-widget
+#Federated Dashboard markitondemand-widget
 
 To install this package you can just add markitondemand-widget: ">0.0.0" to your dependencies in your bower.json file or by executing bower install markitondemand-widget in the terminal inside your project directory.
 
