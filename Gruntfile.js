@@ -27,7 +27,7 @@ module.exports = function (grunt) {
         seperator: ';'
       },
       dist: {
-        src: ['lib/namespace.js','lib/flickr.dev.js', '.tmp/scripts/form.js', '.tmp/scripts/*.js'],
+        src: ['lib/namespace.js', '.tmp/scripts/form.js', '.tmp/scripts/*.js'],
         dest: 'dist/<%= pkg.name %>.js'
       }
     },
