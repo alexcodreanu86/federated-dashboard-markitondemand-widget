@@ -1,6 +1,6 @@
 {
   "name": "federated-dashboard-markitondemand-widget",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "authors": [
     "Alex Codreanu <alexcodreanu86@gmail.com>"
   ],
@@ -11,5 +11,6 @@
   "devDependencies": {
     "jasmine-jquery": "2.0.3",
     "coffee-script": "~1.7.1"
-  }
+  },
+  "ignore": ['scripts', 'spec', '.tmp']
 }
