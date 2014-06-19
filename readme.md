@@ -8,4 +8,4 @@ To use the widget just add the dist/federated-dashboard-markitondemand-widget.js
 <script src="/bower_components/markitondemand-widget/dist/federated-dashboard-markitondemand-widget.js"></script>
 ```
 
-Now all you have to do is call Stock.Controller.setupWidgetIn('.container') where .container can be any desired JQuery selector that you want to serve as the container of the widget 
+Now all you have to do is call `Stock.Controller.setupWidgetIn('.container')` where `.container` can be any desired JQuery selector that you want to serve as the container of the widget.
