@@ -4,6 +4,11 @@
   "authors": [
     "Alex Codreanu <alexcodreanu86@gmail.com>"
   ],
+  "ignore": [
+    "scripts",
+    "spec",
+    ".tmp"
+  ],
   "dependencies": {
     "underscore": "~1.6.0",
     "jquery": "~2.1.0"
@@ -11,6 +16,5 @@
   "devDependencies": {
     "jasmine-jquery": "2.0.3",
     "coffee-script": "~1.7.1"
-  },
-  "ignore": ['scripts', 'spec', '.tmp']
+  }
 }
