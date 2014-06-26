@@ -29,7 +29,7 @@ describe "Stock.Controller", ->
     expect(spy.calls.count()).toEqual(3)
 
   it "getStockData resets the stock table", ->
-    tableSpy = spyOn(Stock.View, 'resetTable')
+    tableSpy = spyOn(Stock.Display, 'resetTable')
     spyOn(Stock.API, 'loadData')
     Stock.Controller.getStockData('AAPL')
     expect(tableSpy).toHaveBeenCalled()
@@ -41,7 +41,7 @@ describe "Stock.Controller", ->
     setupStockFixtures()
     Stock.Controller.bind()
     inputInto('stock-search', 'AAPL GOOG MSFT')
-    spyOn(Stock.API,'loadData').and.returnValue(Stock.View.outputData(stockObj))
+    spyOn(Stock.API,'loadData').and.returnValue(Stock.Display.outputData(stockObj))
     clickOn('[data-id=stock-button]')
     expect(Stock.API.loadData.calls.count()).toEqual(3)
 

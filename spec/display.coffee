@@ -8,10 +8,10 @@ assertDisplayHasAnEmptyTable = ->
 inputInto = (name, value)->
   $("[name=#{name}]").val(value)
 
-describe 'Stock.View', ->
+describe 'Stock.Display', ->
 
   it "formatResponse returns a formated object", ->
-    formatedResponse = Stock.View.formatResponse(stockObj)
+    formatedResponse = Stock.Display.formatResponse(stockObj)
     expect(formatedResponse.change).toEqual('2.47')
     expect(formatedResponse.changePercent).toEqual('0.38')
     expect(formatedResponse.changePercentYTD).toEqual('15.38')
@@ -28,21 +28,24 @@ describe 'Stock.View', ->
   it "getInput returns the text from the input field" , ->
     setFixtures('<input name="stock-search">')
     inputInto('stock-search', 'AAPL')
-    expect(Stock.View.getInput()).toEqual('AAPL')
+    expect(Stock.Display.getInput()).toEqual('AAPL')
 
   it "resetTable adds an empty table to the page", ->
     setFixtures('<div data-id="stock-output"></div>')
-    Stock.View.resetTable()
+    Stock.Display.resetTable()
     assertDisplayHasAnEmptyTable()
 
   it 'outputData adds a row with the stock Object information to the table body', ->
     setFixtures('<div data-id="stock-output"></div>')
-    Stock.View.resetTable()
-    Stock.View.outputData(stockObj)
+    Stock.Display.resetTable()
+    Stock.Display.outputData(stockObj)
     expect($('[data-id=stock-body]')).toContainText('Apple Inc')
-
 
   it 'setupFormIn appends form to the given selector', ->
     setFixtures(sandbox())
-    Stock.View.displayFormIn('#sandbox')
+    Stock.Display.displayFormIn('#sandbox')
     expect($('#sandbox')).toContainElement('[data-id=stock-button]')
+
+  it "generateLogo returns the weather image tag", ->
+    imageHtml = Stock.Display.generateLogo({dataId: "weather-logo"})
+    expect(imageHtml).toBeMatchedBy('[data-id=weather-logo]')

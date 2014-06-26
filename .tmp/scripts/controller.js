@@ -7,15 +7,15 @@
     Controller.bind = function() {
       return $('[data-id=stock-button]').click((function(_this) {
         return function() {
-          return _this.getStockData(Stock.View.getInput());
+          return _this.getStockData(Stock.Display.getInput());
         };
       })(this));
     };
 
     Controller.getStockData = function(searchStr) {
-      Stock.View.resetTable();
+      Stock.Display.resetTable();
       return _.each(this.processInput(searchStr), function(symbol) {
-        return Stock.API.loadData(symbol, Stock.View.outputData);
+        return Stock.API.loadData(symbol, Stock.Display.outputData);
       });
     };
 
@@ -24,7 +24,7 @@
     };
 
     Controller.setupWidgetIn = function(selector) {
-      Stock.View.displayFormIn(selector);
+      Stock.Display.displayFormIn(selector);
       return this.bind();
     };
 
