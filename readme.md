@@ -9,3 +9,10 @@ To use the widget just add the dist/federated-dashboard-markitondemand-widget.js
 ```
 
 Now all you have to do is call `Stock.Controller.setupWidgetIn('.container')` where `.container` can be any desired JQuery selector that you want to serve as the container of the widget.
+
+Credits:
+HighStock from [HighCharts](http://www.highcharts.com) is used for the charts.
+
+Markit On Demand [API](http://dev.markitondemand.com/) is used to get stock data.
+
+Logo: Increase by Rediffusion from The Noun Project

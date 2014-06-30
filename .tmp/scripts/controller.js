@@ -7,24 +7,25 @@
     Controller.bind = function() {
       return $('[data-id=stock-button]').click((function(_this) {
         return function() {
-          return _this.getStockData(Stock.Display.getInput());
+          return _this.getStockData();
         };
       })(this));
     };
 
     Controller.getStockData = function(searchStr) {
-      Stock.Display.resetTable();
-      return _.each(this.processInput(searchStr), function(symbol) {
-        return Stock.API.loadData(symbol, Stock.Display.outputData);
-      });
+      var symbols;
+      symbols = this.processInput();
+      return Stock.API.loadChartData(symbols, Stock.Display.showChart);
     };
 
-    Controller.processInput = function(string) {
-      return string.split(/\s+/);
+    Controller.processInput = function() {
+      var input;
+      input = Stock.Display.getInput();
+      return input.split(/\s+/);
     };
 
     Controller.setupWidgetIn = function(selector) {
-      Stock.Display.displayFormIn(selector);
+      Stock.Display.showFormIn(selector);
       return this.bind();
     };
 

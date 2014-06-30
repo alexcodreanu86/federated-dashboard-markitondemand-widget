@@ -2,12 +2,32 @@ namespace('Stock')
 
 class Stock.API
 
-  @loadData: (symbol, callback) ->
+  @loadChartData: (symbols, callback) ->
+    params = {
+      parameters: JSON.stringify(@prepareParams(symbols))
+    }
     $.ajax({
-      method: 'GET',
-      url: 'http://dev.markitondemand.com/Api/v2/Quote/jsonp',
-      data: {symbol: symbol},
-      dataType: 'jsonp',
+      data: params,
+      url: "http://dev.markitondemand.com/Api/v2/InteractiveChart/jsonp",
+      dataType: "jsonp",
+      context: @,
       success: callback,
-      error: console.log
     })
+
+  @prepareParams: (symbols)->
+    elements = @generateElements(symbols)
+    {
+      Normalized: false,
+      NumberOfDays: 60,
+      DataPeriod: "Day",
+      Elements: elements
+    }
+
+  @generateElements: (symbols) ->
+    elements = []
+    elements.push({
+      Symbol: symbol,
+      Type: "price",
+      Params: ["c"]
+    }) for symbol in symbols
+    elements

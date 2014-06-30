@@ -1,31 +1,31 @@
 (function() {
-  var stockObj;
-
-  stockObj = {
-    Name: "Apple Inc",
-    Symbol: "AAPL",
-    Change: 2.46999999999991,
-    ChangePercent: 0.383052634843819,
-    ChangePercentYTD: 15.3773484011265,
-    Open: 646.3,
-    ChangeYTD: 561.02,
-    High: 649.35,
-    LastPrice: 647.29,
-    Low: 642.72,
-    MSDate: 41795.6659722222,
-    MarketCap: 557563307490,
-    Open: 646.3,
-    Timestamp: "Thu Jun 5 15:59:00 UTC-04:00 2014",
-    Volume: 972798
-  };
-
   describe('Stock.API', function() {
-    return it("calls the callback with a stock Object", function() {
-      var display;
-      display = function() {};
+    it("loadChartData calls is reaching the api through ajax", function() {
       spyOn($, 'ajax');
-      Stock.API.loadData("AAPL", display);
+      Stock.API.loadChartData("AAPL", null);
       return expect($.ajax).toHaveBeenCalled();
+    });
+    it("generateElements returns the elements for one Symbol", function() {
+      var elements;
+      elements = Stock.API.generateElements(["AAPL"]);
+      expect(elements[0].Symbol).toEqual("AAPL");
+      expect(elements[0].Type).toEqual("price");
+      return expect(elements[0].Params).toEqual(["c"]);
+    });
+    it("generateElements returns proper elements for all symbols", function() {
+      var elements;
+      elements = Stock.API.generateElements(["AAPL", "GOOG", "MSFT"]);
+      expect(elements[0].Symbol).toEqual("AAPL");
+      expect(elements[1].Symbol).toEqual("GOOG");
+      return expect(elements[2].Symbol).toEqual("MSFT");
+    });
+    return it("prepareParams returns proper params for one symbol", function() {
+      var params;
+      params = Stock.API.prepareParams(["AAPL"]);
+      expect(params.Normalized).toBe(false);
+      expect(params.NumberOfDays).toBe(60);
+      expect(params.DataPeriod).toEqual("Day");
+      return expect(params.Elements[0].Symbol).toEqual("AAPL");
     });
   });
 
