@@ -209,16 +209,6 @@
       return _.template("<input name=\"stock-search\" type=\"text\"><br>\n<button id=\"stock\" data-id=\"stock-button\">Get Stock Data</button><br>\n<div data-id=\"stock-output\"></div>");
     };
 
-    Templates.renderEmptyTable = function() {
-      return _.template("<table data-id=\"stock-display\">\n  <thead>\n    <tr>\n      <th>Name</th>\n      <th>Change</th>\n      <th>Change Percent</th>\n      <th>Change Percent YTD</th>\n      <th>High</th>\n      <th>Low</th>\n      <th>Last Price</th>\n      <th>Market Cap</th>\n      <th>Open</th>\n      <th>Symbol</th>\n      <th>Volume</th>\n      <th>Time Stamp</th>\n    </tr>\n  </thead>\n  <tbody data-id=\"stock-body\">\n  </tbody>\n</table>");
-    };
-
-    Templates.renderTableRow = function(stockObj) {
-      return _.template("<tr>\n  <td><%= stockObj.name %></td>\n  <td><%= stockObj.change %></td>\n  <td><%= stockObj.changePercent %></td>\n  <td><%= stockObj.changePercentYTD %></td>\n  <td><%= stockObj.high %></td>\n  <td><%= stockObj.low %></td>\n  <td><%= stockObj.lastPrice %></td>\n  <td><%= stockObj.marketCap %></td>\n  <td><%= stockObj.open %></td>\n  <td><%= stockObj.symbol %></td>\n  <td><%= stockObj.volume %></td>\n  <td><%= stockObj.timestamp %></td>\n</tr>", {
-        stockObj: stockObj
-      });
-    };
-
     Templates.renderLogo = function(imgData) {
       return _.template("<img src='<%= imgData['imgSrc'] %>' data-id='<%= imgData['dataId'] %>' style='width: <%= imgData['width'] %>px'/>", {
         imgData: imgData
@@ -226,61 +216,6 @@
     };
 
     return Templates;
-
-  })();
-
-}).call(this);
-
-(function() {
-  namespace('Stock');
-
-  Stock.View = (function() {
-    function View() {}
-
-    View.getInput = function() {
-      return $('[name=stock-search]').val();
-    };
-
-    View.outputData = function(stockObj) {
-      var formatedObj, stockHtml;
-      formatedObj = Stock.View.formatResponse(stockObj);
-      stockHtml = Stock.Templates.renderTableRow(formatedObj);
-      return $('[data-id=stock-body]').append(stockHtml);
-    };
-
-    View.resetTable = function() {
-      var table;
-      table = Stock.Templates.renderEmptyTable();
-      return $('[data-id=stock-output]').html(table);
-    };
-
-    View.displayFormIn = function(container) {
-      var formHtml;
-      formHtml = Stock.Templates.renderForm();
-      return $(container).html(formHtml);
-    };
-
-    View.formatResponse = function(response) {
-      return {
-        name: response.Name,
-        symbol: response.Symbol,
-        change: response.Change.toFixed(2),
-        changePercent: response.ChangePercent.toFixed(2),
-        changePercentYTD: response.ChangePercentYTD.toFixed(2),
-        open: response.Open.toFixed(2),
-        changeYTD: response.ChangeYTD.toFixed(2),
-        high: response.High,
-        lastPrice: response.LastPrice,
-        low: response.Low,
-        msDate: response.MSDate.toFixed(2),
-        marketCap: response.MarketCap,
-        open: response.Open,
-        timestamp: response.Timestamp.substr(0, 18),
-        volume: response.Volume
-      };
-    };
-
-    return View;
 
   })();
 

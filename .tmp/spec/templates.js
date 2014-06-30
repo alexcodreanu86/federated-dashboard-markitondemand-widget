@@ -28,7 +28,7 @@
   };
 
   describe("Stock.Templates", function() {
-    it("renderForm returns the proper html", function() {
+    return it("renderForm returns the proper html", function() {
       var formHtml;
       formHtml = Stock.Templates.renderForm();
       setSandbox();
@@ -36,22 +36,6 @@
       expect($('[name=stock-search]')).toBeInDOM();
       expect($('[data-id=stock-button]')).toBeInDOM();
       return expect($('[data-id=stock-output]')).toBeInDOM();
-    });
-    it("renderEmptyTable returns the proper html", function() {
-      var tableHtml;
-      tableHtml = Stock.Templates.renderEmptyTable();
-      setSandbox();
-      appendToSandbox(tableHtml);
-      return expect($('[data-id=stock-display]')).toBeInDOM();
-    });
-    return it("renderTableRow returns the proper html", function() {
-      var formatedResponse, tRowHtml;
-      formatedResponse = Stock.View.formatResponse(stockObj);
-      tRowHtml = Stock.Templates.renderTableRow(formatedResponse);
-      setSandbox();
-      appendToSandbox(tRowHtml);
-      expect($('#sandbox')).toContainElement("tr");
-      return expect($('td').first()).toContainText('Apple Inc');
     });
   });
 

@@ -15,16 +15,3 @@ describe "Stock.Templates", ->
     expect($('[data-id=stock-button]')).toBeInDOM()
     expect($('[data-id=stock-output]')).toBeInDOM()
 
-  it "renderEmptyTable returns the proper html", ->
-    tableHtml = Stock.Templates.renderEmptyTable()
-    setSandbox()
-    appendToSandbox(tableHtml)
-    expect($('[data-id=stock-display]')).toBeInDOM()
-
-  it "renderTableRow returns the proper html", ->
-    formatedResponse = Stock.View.formatResponse(stockObj)
-    tRowHtml = Stock.Templates.renderTableRow(formatedResponse)
-    setSandbox()
-    appendToSandbox(tRowHtml)
-    expect($('#sandbox')).toContainElement("tr")
-    expect($('td').first()).toContainText('Apple Inc')
