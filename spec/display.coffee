@@ -45,3 +45,16 @@ describe 'Stock.Display', ->
     Stock.Display.showFormIn('#sandbox')
     Stock.Display.showChart(mockResponse)
     expect($('[data-id=stock-output]')).toContainElement('.highcharts-container')
+
+  it "hideForm hides the form", ->
+    setFixtures(sandbox())
+    Stock.Controller.setupWidgetIn('#sandbox')
+    Stock.Display.hideForm()
+    expect($('[data-id=stock-form]').attr('style')).toEqual('display: none;')
+
+  it "showForm displays the form", ->
+    setFixtures(sandbox())
+    Stock.Controller.setupWidgetIn('#sandbox')
+    Stock.Display.hideForm()
+    Stock.Display.showForm()
+    expect($('[data-id=stock-form]').attr('style')).not.toEqual('display: none;')

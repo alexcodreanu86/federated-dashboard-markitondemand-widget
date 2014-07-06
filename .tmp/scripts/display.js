@@ -31,6 +31,14 @@
       return $("[data-id=stock-output]").highcharts('StockChart', formatedResponse);
     };
 
+    Display.hideForm = function() {
+      return $('[data-id=stock-form]').hide();
+    };
+
+    Display.showForm = function() {
+      return $('[data-id=stock-form]').show();
+    };
+
     return Display;
 
   })();

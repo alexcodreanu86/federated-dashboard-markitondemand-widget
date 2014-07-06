@@ -38,11 +38,24 @@
       });
       return expect(imageHtml).toBeMatchedBy('[data-id=stock-logo]');
     });
-    return it("showChart adds the chart to the given container", function() {
+    it("showChart adds the chart to the given container", function() {
       setFixtures(sandbox());
       Stock.Display.showFormIn('#sandbox');
       Stock.Display.showChart(mockResponse);
       return expect($('[data-id=stock-output]')).toContainElement('.highcharts-container');
+    });
+    it("hideForm hides the form", function() {
+      setFixtures(sandbox());
+      Stock.Controller.setupWidgetIn('#sandbox');
+      Stock.Display.hideForm();
+      return expect($('[data-id=stock-form]').attr('style')).toEqual('display: none;');
+    });
+    return it("showForm displays the form", function() {
+      setFixtures(sandbox());
+      Stock.Controller.setupWidgetIn('#sandbox');
+      Stock.Display.hideForm();
+      Stock.Display.showForm();
+      return expect($('[data-id=stock-form]').attr('style')).not.toEqual('display: none;');
     });
   });
 

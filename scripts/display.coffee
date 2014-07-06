@@ -19,3 +19,8 @@ class Stock.Display
     formatedResponse = Stock.DataFormater.formatData(stockResponse, "[data-id=stock-output]")
     $("[data-id=stock-output]").highcharts('StockChart',formatedResponse)
 
+  @hideForm: ->
+    $('[data-id=stock-form]').hide()
+
+  @showForm: ->
+    $('[data-id=stock-form]').show()

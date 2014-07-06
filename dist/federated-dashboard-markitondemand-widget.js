@@ -193,6 +193,14 @@
       return $("[data-id=stock-output]").highcharts('StockChart', formatedResponse);
     };
 
+    Display.hideForm = function() {
+      return $('[data-id=stock-form]').hide();
+    };
+
+    Display.showForm = function() {
+      return $('[data-id=stock-form]').show();
+    };
+
     return Display;
 
   })();
@@ -206,7 +214,7 @@
     function Templates() {}
 
     Templates.renderForm = function() {
-      return _.template("<input name=\"stock-search\" type=\"text\"><br>\n<button id=\"stock\" data-id=\"stock-button\">Get Stock Data</button><br>\n<div data-id=\"stock-output\"></div>");
+      return _.template("<div data-id=\"stock-widget-wrapper\">\n  <div data-id=\"stock-form\">\n    <input name=\"stock-search\" type=\"text\"><button data-id=\"close-stock-widget\">X</button><br>\n    <button data-id=\"stock-button\">Get Stock Data</button><br>\n  </div>\n  <div data-id=\"stock-output\"></div>\n</div>");
     };
 
     Templates.renderLogo = function(imgData) {

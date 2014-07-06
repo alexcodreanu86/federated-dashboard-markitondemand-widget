@@ -3,9 +3,13 @@ namespace('Stock')
 class Stock.Templates
   @renderForm: ->
     _.template("""
-                <input name="stock-search" type="text"><br>
-                <button id="stock" data-id="stock-button">Get Stock Data</button><br>
-                <div data-id="stock-output"></div>
+                <div data-id="stock-widget-wrapper">
+                  <div data-id="stock-form">
+                    <input name="stock-search" type="text"><button data-id="close-stock-widget">X</button><br>
+                    <button data-id="stock-button">Get Stock Data</button><br>
+                  </div>
+                  <div data-id="stock-output"></div>
+                </div>
               """)
 
   @renderLogo: (imgData) ->
