@@ -5,7 +5,7 @@ class Stock.Templates
     _.template("""
                 <div data-id="stock-widget-wrapper">
                   <div data-id="stock-form">
-                    <input name="stock-search" type="text"><button data-id="close-stock-widget">X</button><br>
+                    <input name="stock-search" type="text">
                     <button data-id="stock-button">Get Stock Data</button><br>
                   </div>
                   <div data-id="stock-output"></div>
