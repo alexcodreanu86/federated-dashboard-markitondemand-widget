@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="bower_components/underscore/underscore.js"></script>
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="dist/federated-dashboard-markitondemand-widget.js"></script>
+    <script src="d3.js"></script>
+    <script src="lib/highstock.js"></script>
+    <script src="lib/exports.js"></script>
+  </head>
+  <body>
+    <div id="container" style="width:600px; height:300px;"></div>
+    <script>
+      $(function() {
+        Stock.Display.showFormIn('#container')
+        Stock.Controller.bind()
+      });
+
+    </script>
+  </body>
+</html>

@@ -2,18 +2,17 @@ namespace('Stock')
 
 class Stock.Controller
   @bind: ->
-    $('[data-id=stock-button]').click(=> @getStockData(Stock.Display.getInput()))
+    $('[data-id=stock-button]').click(=> @getStockData())
 
   @getStockData: (searchStr) ->
-    Stock.Display.resetTable()
-    _.each(@processInput(searchStr), (symbol) ->
-      Stock.API.loadData(symbol, Stock.Display.outputData)
-    )
+    symbols = @processInput()
+    Stock.API.loadChartData(symbols, Stock.Display.showChart)
 
-  @processInput: (string) ->
-    string.split(/\s+/)
+  @processInput: ->
+    input = Stock.Display.getInput()
+    input.split(/\s+/)
 
   @setupWidgetIn: (selector) ->
-    Stock.Display.displayFormIn(selector)
+    Stock.Display.showFormIn(selector)
     @bind()
 
