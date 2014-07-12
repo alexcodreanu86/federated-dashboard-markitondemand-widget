@@ -11,7 +11,7 @@ class Stock.Templates
                       <button data-id="stock-button">Get Stock Data</button><br>
                     </div>
                   </div>
-                  <div data-id="stock-output"></div>
+                  <div class="widget-body" data-id="stock-output"></div>
                 </div>
               """)
 
