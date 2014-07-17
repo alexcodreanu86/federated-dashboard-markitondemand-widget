@@ -1,7 +1,7 @@
 (function() {
-  namespace('Stock');
+  namespace('Stock.Widgets');
 
-  Stock.DataFormater = (function() {
+  Stock.Widgets.DataFormater = (function() {
     function DataFormater() {}
 
     DataFormater.formatData = function(stockObj, container) {

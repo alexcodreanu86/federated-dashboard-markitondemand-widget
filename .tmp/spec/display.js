@@ -21,41 +21,12 @@
   };
 
   describe('Stock.Display', function() {
-    it("getInput returns the text from the input field", function() {
-      setFixtures('<input name="stock-search">');
-      inputInto('stock-search', 'AAPL');
-      return expect(Stock.Display.getInput()).toEqual('AAPL');
-    });
-    it('showFormIn appends form to the given selector', function() {
-      setFixtures(sandbox());
-      Stock.Display.showFormIn('#sandbox');
-      return expect($('#sandbox')).toContainElement('[data-id=stock-button]');
-    });
-    it("generateLogo returns the stock image tag", function() {
+    return it("generateLogo returns the stock image tag", function() {
       var imageHtml;
       imageHtml = Stock.Display.generateLogo({
         dataId: "stock-logo"
       });
       return expect(imageHtml).toBeMatchedBy('[data-id=stock-logo]');
-    });
-    it("showChart adds the chart to the given container", function() {
-      setFixtures(sandbox());
-      Stock.Display.showFormIn('#sandbox');
-      Stock.Display.showChart(mockResponse);
-      return expect($('[data-id=stock-output]')).toContainElement('.highcharts-container');
-    });
-    it("hideForm hides the form", function() {
-      setFixtures(sandbox());
-      Stock.Controller.setupWidgetIn('#sandbox');
-      Stock.Display.hideForm();
-      return expect($('[data-id=stock-form]').attr('style')).toEqual('display: none;');
-    });
-    return it("showForm displays the form", function() {
-      setFixtures(sandbox());
-      Stock.Controller.setupWidgetIn('#sandbox');
-      Stock.Display.hideForm();
-      Stock.Display.showForm();
-      return expect($('[data-id=stock-form]').attr('style')).not.toEqual('display: none;');
     });
   });
 

@@ -26,35 +26,6 @@ inputInto = (name, value)->
   $("[name=#{name}]").val(value)
 
 describe 'Stock.Display', ->
-  it "getInput returns the text from the input field" , ->
-    setFixtures('<input name="stock-search">')
-    inputInto('stock-search', 'AAPL')
-    expect(Stock.Display.getInput()).toEqual('AAPL')
-
-  it 'showFormIn appends form to the given selector', ->
-    setFixtures(sandbox())
-    Stock.Display.showFormIn('#sandbox')
-    expect($('#sandbox')).toContainElement('[data-id=stock-button]')
-
   it "generateLogo returns the stock image tag", ->
     imageHtml = Stock.Display.generateLogo({dataId: "stock-logo"})
     expect(imageHtml).toBeMatchedBy('[data-id=stock-logo]')
-
-  it "showChart adds the chart to the given container", ->
-    setFixtures(sandbox())
-    Stock.Display.showFormIn('#sandbox')
-    Stock.Display.showChart(mockResponse)
-    expect($('[data-id=stock-output]')).toContainElement('.highcharts-container')
-
-  it "hideForm hides the form", ->
-    setFixtures(sandbox())
-    Stock.Controller.setupWidgetIn('#sandbox')
-    Stock.Display.hideForm()
-    expect($('[data-id=stock-form]').attr('style')).toEqual('display: none;')
-
-  it "showForm displays the form", ->
-    setFixtures(sandbox())
-    Stock.Controller.setupWidgetIn('#sandbox')
-    Stock.Display.hideForm()
-    Stock.Display.showForm()
-    expect($('[data-id=stock-form]').attr('style')).not.toEqual('display: none;')

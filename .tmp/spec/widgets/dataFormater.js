@@ -52,15 +52,15 @@
     });
   };
 
-  describe("Stock.DataFormater", function() {
+  describe("Stock.Widgets.DataFormater", function() {
     it("formatData returns properly formated data for one symbol", function() {
       var data;
-      data = Stock.DataFormater.formatData(oneSymbolResponse, "#sandbox");
+      data = Stock.Widgets.DataFormater.formatData(oneSymbolResponse, "#sandbox");
       return assertAAPLDataIsFormatedProperly(data);
     });
     return it("formatData returns properly formated data for two symbols", function() {
       var data;
-      data = Stock.DataFormater.formatData(twoSymbolResponse, "#sandbox");
+      data = Stock.Widgets.DataFormater.formatData(twoSymbolResponse, "#sandbox");
       assertAAPLDataIsFormatedProperly(data);
       return assertGOOGDataIsFormatedProperly(data);
     });

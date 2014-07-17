@@ -8,8 +8,8 @@
     "lib/highstock.js",
     "lib/exports.js",
     "bower_components/jasmine-jquery/lib/jasmine-jquery.js",
-    ".tmp/scripts/*.js",
-    ".tmp/spec/*.js"
+    ".tmp/scripts/**/*.js",
+    ".tmp/spec/**/*.js"
   ],
   "launch_in_ci": ["PhantomJS"],
   "launch_in_dev": ["Chrome"]

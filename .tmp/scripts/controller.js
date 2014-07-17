@@ -4,29 +4,56 @@
   Stock.Controller = (function() {
     function Controller() {}
 
-    Controller.bind = function() {
-      return $('[data-id=stock-button]').click((function(_this) {
-        return function() {
-          return _this.getStockData();
-        };
-      })(this));
+    Controller.widgets = [];
+
+    Controller.setupWidgetIn = function(container, apiKey) {
+      var widget;
+      widget = new Stock.Widgets.Controller(container, apiKey);
+      widget.initialize();
+      return this.addToWidgetsContainer(widget);
     };
 
-    Controller.getStockData = function(searchStr) {
-      var symbols;
-      symbols = this.processInput();
-      return Stock.API.loadChartData(symbols, Stock.Display.showChart);
+    Controller.addToWidgetsContainer = function(widget) {
+      return this.widgets.push(widget);
     };
 
-    Controller.processInput = function() {
-      var input;
-      input = Stock.Display.getInput();
-      return input.split(/\s+/);
+    Controller.getWidgets = function() {
+      return this.widgets;
     };
 
-    Controller.setupWidgetIn = function(selector) {
-      Stock.Display.showFormIn(selector);
-      return this.bind();
+    Controller.hideForms = function() {
+      return this.allWidgetsExecute("hideForm");
+    };
+
+    Controller.showForms = function() {
+      return this.allWidgetsExecute("showForm");
+    };
+
+    Controller.allWidgetsExecute = function(command) {
+      return _.each(this.widgets, function(widget) {
+        return widget[command]();
+      });
+    };
+
+    Controller.closeWidgetInContainer = function(container) {
+      var widget;
+      widget = _.filter(this.widgets, function(widget, index) {
+        return widget.container === container;
+      })[0];
+      if (widget) {
+        this.removeWidgetContent(widget);
+        return this.removeFromWidgetsContainer(widget);
+      }
+    };
+
+    Controller.removeFromWidgetsContainer = function(widgetToRemove) {
+      return this.widgets = _.reject(this.widgets, function(widget) {
+        return widget === widgetToRemove;
+      });
+    };
+
+    Controller.removeWidgetContent = function(widget) {
+      return widget.removeContent();
     };
 
     return Controller;

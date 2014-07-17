@@ -1,6 +1,6 @@
-namespace('Stock')
+namespace('Stock.Widgets')
 
-class Stock.DataFormater
+class Stock.Widgets.DataFormater
   @formatData: (stockObj, container) ->
     {
       rangeSelector : {

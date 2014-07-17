@@ -1,5 +1,5 @@
 (function() {
-  var clickOn, inputInto, mockResponse, setupStockFixtures;
+  var clickOn, container1, container2, inputInto, mockResponse, resetWidgetsContainer, setSandbox, setupStockFixtures, setupTwoContainers;
 
   setupStockFixtures = function() {
     return setFixtures("<input name=\"stock-search\" type=\"text\">\n<button data-id=\"stock-button\"></button>\n<div data-id=\"stock-output\"></div>");
@@ -28,32 +28,84 @@
     return $(element).click();
   };
 
+  clickOn = function(element) {
+    return $(element).click();
+  };
+
+  resetWidgetsContainer = function() {
+    return Stock.Controller.widgets = [];
+  };
+
+  setSandbox = function() {
+    return setFixtures(sandbox());
+  };
+
+  setupTwoContainers = function() {
+    return setFixtures("<div data-id='widget-container-1'></div>\n<div data-id='widget-container-2'></div>");
+  };
+
+  container1 = "[data-id=widget-container-1]";
+
+  container2 = "[data-id=widget-container-2]";
+
   describe("Stock.Controller", function() {
-    it('processInput returns an array of words in a string', function() {
-      setupStockFixtures();
-      inputInto('stock-search', "some string here");
-      return expect(Stock.Controller.processInput()).toEqual(['some', 'string', 'here']);
+    it("widgets container is empty on initialization", function() {
+      var container;
+      resetWidgetsContainer();
+      container = Stock.Controller.getWidgets();
+      return expect(container.length).toBe(0);
     });
-    it('bind displays stock when the stock-button is clicked', function() {
-      setupStockFixtures();
-      Stock.Controller.bind();
-      inputInto('stock-search', 'AAPL GOOG MSFT');
-      spyOn(Stock.API, 'loadChartData').and.returnValue(Stock.Display.showChart(mockResponse));
-      clickOn('[data-id=stock-button]');
-      return expect($('[data-id=stock-output]')).toContainElement('.highcharts-container');
+    it("setupWidgetIn is setting up a widget instance in the desired element", function() {
+      var html;
+      resetWidgetsContainer();
+      setSandbox();
+      Stock.Controller.setupWidgetIn('#sandbox', "123456");
+      html = $('#sandbox');
+      expect(html).toContainElement('[name=stock-search]');
+      expect(html).toContainElement('[data-id=stock-button]');
+      return expect(html).toContainElement('[data-id=stock-output]');
     });
-    it('setupFormIn appends form to the given selector', function() {
-      setFixtures(sandbox());
-      Stock.Controller.setupWidgetIn('#sandbox');
-      return expect($('#sandbox')).toContainElement('[data-id=stock-button]');
+    it("setupWidgetIn is adding the initialized widget to the widgets container", function() {
+      resetWidgetsContainer();
+      setSandbox();
+      Stock.Controller.setupWidgetIn('#sandbox', "123456");
+      return expect(Stock.Controller.getWidgets().length).toEqual(1);
     });
-    return it('bind calls getChartData wth the current text in the input', function() {
-      setupStockFixtures();
-      Stock.Controller.bind();
-      spyOn(Stock.Controller, 'getStockData');
-      inputInto('stock-search', 'AAPL');
-      clickOn('[data-id=stock-button]');
-      return expect(Stock.Controller.getStockData);
+    it("hideForms is hiding the forms of all the widgets that are initialized", function() {
+      resetWidgetsContainer();
+      setupTwoContainers();
+      Stock.Controller.setupWidgetIn(container1, "123456");
+      Stock.Controller.setupWidgetIn(container2, "123456");
+      Stock.Controller.hideForms();
+      expect($("" + container1 + " [data-id=stock-form]").attr('style')).toEqual('display: none;');
+      return expect($("" + container2 + " [data-id=stock-form]").attr('style')).toEqual('display: none;');
+    });
+    it("showForms is showing the forms of all the widgets that are initialized", function() {
+      resetWidgetsContainer();
+      setupTwoContainers();
+      Stock.Controller.setupWidgetIn(container1, "123456");
+      Stock.Controller.setupWidgetIn(container2, "123456");
+      Stock.Controller.hideForms();
+      Stock.Controller.showForms();
+      expect($("" + container1 + " [data-id=stock-form]").attr('style')).not.toEqual('display: none;');
+      return expect($("" + container2 + " [data-id=stock-form]").attr('style')).not.toEqual('display: none;');
+    });
+    it("closeWidgetInContainer will eliminate the widget from the given container", function() {
+      resetWidgetsContainer();
+      setupTwoContainers();
+      Stock.Controller.setupWidgetIn(container1, "123456");
+      Stock.Controller.setupWidgetIn(container2, "123456");
+      Stock.Controller.closeWidgetInContainer(container1);
+      expect($("" + container1 + " [data-id=stock-form]")).not.toBeInDOM();
+      return expect($("" + container2 + " [data-id=stock-form]")).toBeInDOM();
+    });
+    return it("closeWidgetInContainer will remove the widget from the widgets container", function() {
+      resetWidgetsContainer();
+      setupTwoContainers();
+      Stock.Controller.setupWidgetIn(container1, "123456");
+      Stock.Controller.setupWidgetIn(container2, "123456");
+      Stock.Controller.closeWidgetInContainer(container1);
+      return expect(Stock.Controller.getWidgets().length).toEqual(1);
     });
   });
 

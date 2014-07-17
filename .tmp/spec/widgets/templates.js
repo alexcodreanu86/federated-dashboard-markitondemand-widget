@@ -9,10 +9,10 @@
     return setFixtures(sandbox());
   };
 
-  describe("Stock.Templates", function() {
+  describe("Stock.Widgets.Templates", function() {
     return it("renderForm returns the proper html", function() {
       var formHtml;
-      formHtml = Stock.Templates.renderForm();
+      formHtml = Stock.Widgets.Templates.renderForm();
       setSandbox();
       appendToSandbox(formHtml);
       expect($('[data-id=stock-form]')).toContainElement('[name=stock-search]');

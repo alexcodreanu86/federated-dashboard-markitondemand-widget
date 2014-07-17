@@ -64,12 +64,12 @@ assertGOOGDataIsFormatedProperly = (data) ->
   expect(data.series[1].data).toEqual(GOOGData)
   expect(data.series[1].tooltip).toEqual({valueDecimals: 2})
 
-describe "Stock.DataFormater", ->
+describe "Stock.Widgets.DataFormater", ->
   it "formatData returns properly formated data for one symbol", ->
-    data = Stock.DataFormater.formatData(oneSymbolResponse,"#sandbox")
+    data = Stock.Widgets.DataFormater.formatData(oneSymbolResponse,"#sandbox")
     assertAAPLDataIsFormatedProperly(data)
 
   it "formatData returns properly formated data for two symbols", ->
-    data  = Stock.DataFormater.formatData(twoSymbolResponse, "#sandbox")
+    data  = Stock.Widgets.DataFormater.formatData(twoSymbolResponse, "#sandbox")
     assertAAPLDataIsFormatedProperly(data)
     assertGOOGDataIsFormatedProperly(data)

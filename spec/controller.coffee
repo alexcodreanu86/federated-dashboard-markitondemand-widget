@@ -34,32 +34,78 @@ inputInto = (name, value)->
 clickOn = (element) ->
   $(element).click()
 
+
+clickOn = (element) ->
+  $(element).click()
+
+resetWidgetsContainer = ->
+  Stock.Controller.widgets = []
+
+setSandbox = ->
+  setFixtures(sandbox())
+
+setupTwoContainers = ->
+  setFixtures """
+    <div data-id='widget-container-1'></div>
+    <div data-id='widget-container-2'></div>
+  """
+
+container1 = "[data-id=widget-container-1]"
+container2 = "[data-id=widget-container-2]"
+
 describe "Stock.Controller", ->
+  it "widgets container is empty on initialization", ->
+    resetWidgetsContainer()
+    container = Stock.Controller.getWidgets()
+    expect(container.length).toBe(0)
 
-  it 'processInput returns an array of words in a string', ->
-    setupStockFixtures()
-    inputInto('stock-search', "some string here")
-    expect(Stock.Controller.processInput()).toEqual(['some', 'string', 'here'])
+  it "setupWidgetIn is setting up a widget instance in the desired element", ->
+    resetWidgetsContainer()
+    setSandbox()
+    Stock.Controller.setupWidgetIn('#sandbox', "123456")
+    html = $('#sandbox')
+    expect(html).toContainElement('[name=stock-search]')
+    expect(html).toContainElement('[data-id=stock-button]')
+    expect(html).toContainElement('[data-id=stock-output]')
 
-  it 'bind displays stock when the stock-button is clicked', ->
-    setupStockFixtures()
-    Stock.Controller.bind()
-    inputInto('stock-search', 'AAPL GOOG MSFT')
-    spyOn(Stock.API,'loadChartData').and.returnValue(Stock.Display.showChart(mockResponse))
-    clickOn('[data-id=stock-button]')
-    expect($('[data-id=stock-output]')).toContainElement('.highcharts-container')
+  it "setupWidgetIn is adding the initialized widget to the widgets container", ->
+    resetWidgetsContainer()
+    setSandbox()
+    Stock.Controller.setupWidgetIn('#sandbox', "123456")
+    expect(Stock.Controller.getWidgets().length).toEqual(1)
 
+  it "hideForms is hiding the forms of all the widgets that are initialized", ->
+    resetWidgetsContainer()
+    setupTwoContainers()
+    Stock.Controller.setupWidgetIn(container1, "123456")
+    Stock.Controller.setupWidgetIn(container2, "123456")
+    Stock.Controller.hideForms()
+    expect($("#{container1} [data-id=stock-form]").attr('style')).toEqual('display: none;')
+    expect($("#{container2} [data-id=stock-form]").attr('style')).toEqual('display: none;')
 
-  it 'setupFormIn appends form to the given selector', ->
-    setFixtures(sandbox())
-    Stock.Controller.setupWidgetIn('#sandbox')
-    expect($('#sandbox')).toContainElement('[data-id=stock-button]')
+  it "showForms is showing the forms of all the widgets that are initialized", ->
+    resetWidgetsContainer()
+    setupTwoContainers()
+    Stock.Controller.setupWidgetIn(container1, "123456")
+    Stock.Controller.setupWidgetIn(container2, "123456")
+    Stock.Controller.hideForms()
+    Stock.Controller.showForms()
+    expect($("#{container1} [data-id=stock-form]").attr('style')).not.toEqual('display: none;')
+    expect($("#{container2} [data-id=stock-form]").attr('style')).not.toEqual('display: none;')
 
-  it 'bind calls getChartData wth the current text in the input', ->
-    setupStockFixtures()
-    Stock.Controller.bind()
-    spyOn(Stock.Controller, 'getStockData')
-    inputInto('stock-search', 'AAPL')
-    clickOn('[data-id=stock-button]')
-    expect(Stock.Controller.getStockData)
+  it "closeWidgetInContainer will eliminate the widget from the given container", ->
+    resetWidgetsContainer()
+    setupTwoContainers()
+    Stock.Controller.setupWidgetIn(container1, "123456")
+    Stock.Controller.setupWidgetIn(container2, "123456")
+    Stock.Controller.closeWidgetInContainer(container1)
+    expect($("#{container1} [data-id=stock-form]")).not.toBeInDOM()
+    expect($("#{container2} [data-id=stock-form]")).toBeInDOM()
 
+  it "closeWidgetInContainer will remove the widget from the widgets container", ->
+    resetWidgetsContainer()
+    setupTwoContainers()
+    Stock.Controller.setupWidgetIn(container1, "123456")
+    Stock.Controller.setupWidgetIn(container2, "123456")
+    Stock.Controller.closeWidgetInContainer(container1)
+    expect(Stock.Controller.getWidgets().length).toEqual(1)

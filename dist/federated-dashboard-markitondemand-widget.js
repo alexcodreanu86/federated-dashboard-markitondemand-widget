@@ -74,29 +74,56 @@
   Stock.Controller = (function() {
     function Controller() {}
 
-    Controller.bind = function() {
-      return $('[data-id=stock-button]').click((function(_this) {
-        return function() {
-          return _this.getStockData();
-        };
-      })(this));
+    Controller.widgets = [];
+
+    Controller.setupWidgetIn = function(container, apiKey) {
+      var widget;
+      widget = new Stock.Widgets.Controller(container, apiKey);
+      widget.initialize();
+      return this.addToWidgetsContainer(widget);
     };
 
-    Controller.getStockData = function(searchStr) {
-      var symbols;
-      symbols = this.processInput();
-      return Stock.API.loadChartData(symbols, Stock.Display.showChart);
+    Controller.addToWidgetsContainer = function(widget) {
+      return this.widgets.push(widget);
     };
 
-    Controller.processInput = function() {
-      var input;
-      input = Stock.Display.getInput();
-      return input.split(/\s+/);
+    Controller.getWidgets = function() {
+      return this.widgets;
     };
 
-    Controller.setupWidgetIn = function(selector) {
-      Stock.Display.showFormIn(selector);
-      return this.bind();
+    Controller.hideForms = function() {
+      return this.allWidgetsExecute("hideForm");
+    };
+
+    Controller.showForms = function() {
+      return this.allWidgetsExecute("showForm");
+    };
+
+    Controller.allWidgetsExecute = function(command) {
+      return _.each(this.widgets, function(widget) {
+        return widget[command]();
+      });
+    };
+
+    Controller.closeWidgetInContainer = function(container) {
+      var widget;
+      widget = _.filter(this.widgets, function(widget, index) {
+        return widget.container === container;
+      })[0];
+      if (widget) {
+        this.removeWidgetContent(widget);
+        return this.removeFromWidgetsContainer(widget);
+      }
+    };
+
+    Controller.removeFromWidgetsContainer = function(widgetToRemove) {
+      return this.widgets = _.reject(this.widgets, function(widget) {
+        return widget === widgetToRemove;
+      });
+    };
+
+    Controller.removeWidgetContent = function(widget) {
+      return widget.removeContent();
     };
 
     return Controller;
@@ -108,7 +135,164 @@
 (function() {
   namespace('Stock');
 
-  Stock.DataFormater = (function() {
+  Stock.Display = (function() {
+    function Display() {}
+
+    Display.logoSrc = "https://raw.githubusercontent.com/bwvoss/federated-dashboard-markitondemand-widget/master/lib/icon_29406/stock_icon.png";
+
+    Display.generateLogo = function(config) {
+      var logoSrc;
+      logoSrc = this.logoSrc;
+      _.extend(config, {
+        imgSrc: logoSrc
+      });
+      return Stock.Templates.renderLogo(config);
+    };
+
+    return Display;
+
+  })();
+
+}).call(this);
+
+(function() {
+  namespace('Stock');
+
+  Stock.Templates = (function() {
+    function Templates() {}
+
+    Templates.renderForm = function() {
+      return _.template("<div class='widget' data-id=\"stock-widget-wrapper\">\n  <div class='widget-header'>\n    <h2 class=\"widget-title\">Stock</h2>\n    <div class=\"widget-form\" data-id=\"stock-form\">\n      <input name=\"stock-search\" type=\"text\">\n      <button data-id=\"stock-button\">Get Stock Data</button><br>\n    </div>\n  </div>\n  <div class=\"widget-body\" data-id=\"stock-output\"></div>\n</div>");
+    };
+
+    Templates.renderLogo = function(imgData) {
+      return _.template("<img src='<%= imgData['imgSrc'] %>' data-id='<%= imgData['dataId'] %>' style='width: <%= imgData['width'] %>px'/>", {
+        imgData: imgData
+      });
+    };
+
+    return Templates;
+
+  })();
+
+}).call(this);
+
+(function() {
+  namespace('Stock.Widgets');
+
+  Stock.Widgets.API = (function() {
+    function API() {}
+
+    API.loadChartData = function(symbols, callback) {
+      var params;
+      params = {
+        parameters: JSON.stringify(this.prepareParams(symbols))
+      };
+      return $.ajax({
+        data: params,
+        url: "http://dev.markitondemand.com/Api/v2/InteractiveChart/jsonp",
+        dataType: "jsonp",
+        context: this,
+        success: callback
+      });
+    };
+
+    API.prepareParams = function(symbols) {
+      var elements;
+      elements = this.generateElements(symbols);
+      return {
+        Normalized: false,
+        NumberOfDays: 60,
+        DataPeriod: "Day",
+        Elements: elements
+      };
+    };
+
+    API.generateElements = function(symbols) {
+      var elements, symbol, _i, _len;
+      elements = [];
+      for (_i = 0, _len = symbols.length; _i < _len; _i++) {
+        symbol = symbols[_i];
+        elements.push({
+          Symbol: symbol,
+          Type: "price",
+          Params: ["c"]
+        });
+      }
+      return elements;
+    };
+
+    return API;
+
+  })();
+
+}).call(this);
+
+(function() {
+  namespace("Stock.Widgets");
+
+  Stock.Widgets.Controller = (function() {
+    var apiKey;
+
+    apiKey = void 0;
+
+    function Controller(container, key) {
+      apiKey = key;
+      this.container = container;
+      this.display = new Stock.Widgets.Display(container);
+    }
+
+    Controller.prototype.initialize = function() {
+      this.display.setupWidget();
+      return this.bind();
+    };
+
+    Controller.prototype.getContainer = function() {
+      return this.container;
+    };
+
+    Controller.prototype.bind = function() {
+      return $("" + this.container + " [data-id=stock-button]").click((function(_this) {
+        return function() {
+          return _this.getStockData();
+        };
+      })(this));
+    };
+
+    Controller.prototype.getStockData = function(searchStr) {
+      var symbols;
+      symbols = this.processInput();
+      return Stock.Widgets.API.loadChartData(symbols, Stock.Display.showChart);
+    };
+
+    Controller.prototype.processInput = function() {
+      var input;
+      input = this.display.getInput();
+      return input.split(/\s+/);
+    };
+
+    Controller.prototype.hideForm = function() {
+      return this.display.hideForm();
+    };
+
+    Controller.prototype.showForm = function() {
+      return this.display.showForm();
+    };
+
+    Controller.prototype.removeContent = function() {
+      return this.display.removeWidget();
+    };
+
+    return Controller;
+
+  })();
+
+}).call(this);
+
+(function() {
+  namespace('Stock.Widgets');
+
+  Stock.Widgets.DataFormater = (function() {
     function DataFormater() {}
 
     DataFormater.formatData = function(stockObj, container) {
@@ -161,44 +345,39 @@
 }).call(this);
 
 (function() {
-  namespace('Stock');
+  namespace("Stock.Widget");
 
-  Stock.Display = (function() {
-    function Display() {}
+  Stock.Widgets.Display = (function() {
+    function Display(container) {
+      this.container = container;
+    }
 
-    Display.getInput = function() {
-      return $('[name=stock-search]').val();
+    Display.prototype.setupWidget = function() {
+      var widgetHtml;
+      widgetHtml = Stock.Widgets.Templates.renderForm();
+      return $(this.container).append(widgetHtml);
     };
 
-    Display.showFormIn = function(container) {
-      var formHtml;
-      formHtml = Stock.Templates.renderForm();
-      return $(container).html(formHtml);
+    Display.prototype.getInput = function() {
+      return $("" + this.container + " [name=stock-search]").val();
     };
 
-    Display.logoSrc = "https://raw.githubusercontent.com/bwvoss/federated-dashboard-markitondemand-widget/master/lib/icon_29406/stock_icon.png";
-
-    Display.generateLogo = function(config) {
-      var logoSrc;
-      logoSrc = this.logoSrc;
-      _.extend(config, {
-        imgSrc: logoSrc
-      });
-      return Stock.Templates.renderLogo(config);
-    };
-
-    Display.showChart = function(stockResponse) {
+    Display.prototype.showChart = function(stockResponse) {
       var formatedResponse;
-      formatedResponse = Stock.DataFormater.formatData(stockResponse, "[data-id=stock-output]");
-      return $("[data-id=stock-output]").highcharts('StockChart', formatedResponse);
+      formatedResponse = Stock.Widgets.DataFormater.formatData(stockResponse, "[data-id=stock-output]");
+      return $("" + this.container + " [data-id=stock-output]").highcharts('StockChart', formatedResponse);
     };
 
-    Display.hideForm = function() {
-      return $('[data-id=stock-form]').hide();
+    Display.prototype.hideForm = function() {
+      return $("" + this.container + " [data-id=stock-form]").hide();
     };
 
-    Display.showForm = function() {
-      return $('[data-id=stock-form]').show();
+    Display.prototype.showForm = function() {
+      return $("" + this.container + " [data-id=stock-form]").show();
+    };
+
+    Display.prototype.removeWidget = function() {
+      return $("" + this.container + " [data-id=stock-widget-wrapper]").remove();
     };
 
     return Display;
@@ -208,19 +387,13 @@
 }).call(this);
 
 (function() {
-  namespace('Stock');
+  namespace("Stock.Widgets");
 
-  Stock.Templates = (function() {
+  Stock.Widgets.Templates = (function() {
     function Templates() {}
 
     Templates.renderForm = function() {
       return _.template("<div class='widget' data-id=\"stock-widget-wrapper\">\n  <div class='widget-header'>\n    <h2 class=\"widget-title\">Stock</h2>\n    <div class=\"widget-form\" data-id=\"stock-form\">\n      <input name=\"stock-search\" type=\"text\">\n      <button data-id=\"stock-button\">Get Stock Data</button><br>\n    </div>\n  </div>\n  <div class=\"widget-body\" data-id=\"stock-output\"></div>\n</div>");
-    };
-
-    Templates.renderLogo = function(imgData) {
-      return _.template("<img src='<%= imgData['imgSrc'] %>' data-id='<%= imgData['dataId'] %>' style='width: <%= imgData['width'] %>px'/>", {
-        imgData: imgData
-      });
     };
 
     return Templates;

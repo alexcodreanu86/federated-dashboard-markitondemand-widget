@@ -1,6 +1,6 @@
-namespace('Stock')
+namespace('Stock.Widgets')
 
-class Stock.API
+class Stock.Widgets.API
 
   @loadChartData: (symbols, callback) ->
     params = {
