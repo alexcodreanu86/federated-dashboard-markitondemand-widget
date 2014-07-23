@@ -2,16 +2,18 @@ namespace('Stock.Widgets')
 
 class Stock.Widgets.API
 
-  @loadChartData: (symbols, callback) ->
+  @loadChartData: (symbols, displayer) ->
     params = {
       parameters: JSON.stringify(@prepareParams(symbols))
     }
+
     $.ajax({
       data: params,
       url: "http://dev.markitondemand.com/Api/v2/InteractiveChart/jsonp",
       dataType: "jsonp",
       context: @,
-      success: callback,
+      success: (response) ->
+        displayer.showChart(response)
     })
 
   @prepareParams: (symbols)->

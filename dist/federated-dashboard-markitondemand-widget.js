@@ -76,9 +76,9 @@
 
     Controller.widgets = [];
 
-    Controller.setupWidgetIn = function(container, apiKey) {
+    Controller.setupWidgetIn = function(container, apiKey, defaultValue) {
       var widget;
-      widget = new Stock.Widgets.Controller(container, apiKey);
+      widget = new Stock.Widgets.Controller(container, apiKey, defaultValue);
       widget.initialize();
       return this.addToWidgetsContainer(widget);
     };
@@ -100,9 +100,15 @@
     };
 
     Controller.allWidgetsExecute = function(command) {
-      return _.each(this.widgets, function(widget) {
-        return widget[command]();
-      });
+      return _.each(this.widgets, (function(_this) {
+        return function(widget) {
+          if (widget.isActive()) {
+            return widget[command]();
+          } else {
+            return _this.removeFromWidgetsContainer(widget);
+          }
+        };
+      })(this));
     };
 
     Controller.closeWidgetInContainer = function(container) {
@@ -161,10 +167,6 @@
   Stock.Templates = (function() {
     function Templates() {}
 
-    Templates.renderForm = function() {
-      return _.template("<div class='widget' data-id=\"stock-widget-wrapper\">\n  <div class='widget-header'>\n    <h2 class=\"widget-title\">Stock</h2>\n    <div class=\"widget-form\" data-id=\"stock-form\">\n      <input name=\"stock-search\" type=\"text\">\n      <button data-id=\"stock-button\">Get Stock Data</button><br>\n    </div>\n  </div>\n  <div class=\"widget-body\" data-id=\"stock-output\"></div>\n</div>");
-    };
-
     Templates.renderLogo = function(imgData) {
       return _.template("<img src='<%= imgData['imgSrc'] %>' data-id='<%= imgData['dataId'] %>' style='width: <%= imgData['width'] %>px'/>", {
         imgData: imgData
@@ -183,7 +185,7 @@
   Stock.Widgets.API = (function() {
     function API() {}
 
-    API.loadChartData = function(symbols, callback) {
+    API.loadChartData = function(symbols, displayer) {
       var params;
       params = {
         parameters: JSON.stringify(this.prepareParams(symbols))
@@ -193,7 +195,9 @@
         url: "http://dev.markitondemand.com/Api/v2/InteractiveChart/jsonp",
         dataType: "jsonp",
         context: this,
-        success: callback
+        success: function(response) {
+          return displayer.showChart(response);
+        }
       });
     };
 
@@ -236,15 +240,37 @@
 
     apiKey = void 0;
 
-    function Controller(container, key) {
+    function Controller(container, key, defaultValue) {
       apiKey = key;
       this.container = container;
       this.display = new Stock.Widgets.Display(container);
+      this.defaultValue = defaultValue;
+      this.activeStatus = false;
     }
 
     Controller.prototype.initialize = function() {
       this.display.setupWidget();
-      return this.bind();
+      this.bind();
+      this.displayDefault();
+      return this.setAsActive();
+    };
+
+    Controller.prototype.displayDefault = function() {
+      if (this.defaultValue) {
+        return this.loadStockData(this.defaultValue);
+      }
+    };
+
+    Controller.prototype.setAsActive = function() {
+      return this.activeStatus = true;
+    };
+
+    Controller.prototype.setAsInactive = function() {
+      return this.activeStatus = false;
+    };
+
+    Controller.prototype.isActive = function() {
+      return this.activeStatus;
     };
 
     Controller.prototype.getContainer = function() {
@@ -252,23 +278,47 @@
     };
 
     Controller.prototype.bind = function() {
-      return $("" + this.container + " [data-id=stock-button]").click((function(_this) {
+      $("" + this.container + " [data-id=stock-button]").click((function(_this) {
         return function() {
           return _this.getStockData();
         };
       })(this));
+      return $("" + this.container + " [data-id=stock-close]").click((function(_this) {
+        return function() {
+          return _this.closeWidget();
+        };
+      })(this));
     };
 
-    Controller.prototype.getStockData = function(searchStr) {
-      var symbols;
-      symbols = this.processInput();
-      return Stock.Widgets.API.loadChartData(symbols, Stock.Display.showChart);
-    };
-
-    Controller.prototype.processInput = function() {
+    Controller.prototype.getStockData = function() {
       var input;
       input = this.display.getInput();
+      return this.loadStockData(input);
+    };
+
+    Controller.prototype.loadStockData = function(input) {
+      var symbols;
+      symbols = this.processInput(input);
+      return Stock.Widgets.API.loadChartData(symbols, this.display);
+    };
+
+    Controller.prototype.processInput = function(input) {
       return input.split(/\s+/);
+    };
+
+    Controller.prototype.closeWidget = function() {
+      this.unbind();
+      this.removeContent();
+      return this.setAsInactive();
+    };
+
+    Controller.prototype.removeContent = function() {
+      return this.display.removeWidget();
+    };
+
+    Controller.prototype.unbind = function() {
+      $("" + this.container + " [data-id=weather-button]").unbind('click');
+      return $("" + this.container + " [data-id=weather-close]").unbind('click');
     };
 
     Controller.prototype.hideForm = function() {
@@ -277,10 +327,6 @@
 
     Controller.prototype.showForm = function() {
       return this.display.showForm();
-    };
-
-    Controller.prototype.removeContent = function() {
-      return this.display.removeWidget();
     };
 
     return Controller;
@@ -377,7 +423,7 @@
     };
 
     Display.prototype.removeWidget = function() {
-      return $("" + this.container + " [data-id=stock-widget-wrapper]").remove();
+      return $(this.container).remove();
     };
 
     return Display;
@@ -393,7 +439,7 @@
     function Templates() {}
 
     Templates.renderForm = function() {
-      return _.template("<div class='widget' data-id=\"stock-widget-wrapper\">\n  <div class='widget-header'>\n    <h2 class=\"widget-title\">Stock</h2>\n    <div class=\"widget-form\" data-id=\"stock-form\">\n      <input name=\"stock-search\" type=\"text\">\n      <button data-id=\"stock-button\">Get Stock Data</button><br>\n    </div>\n  </div>\n  <div class=\"widget-body\" data-id=\"stock-output\"></div>\n</div>");
+      return _.template("<div class='widget' data-id=\"stock-widget-wrapper\">\n  <div class='widget-header'>\n    <h2 class=\"widget-title\">Stock</h2>\n    <span class='widget-close' data-id='stock-close'>×</span>\n    <div class=\"widget-form\" data-id=\"stock-form\">\n      <input name=\"stock-search\" type=\"text\">\n      <button data-id=\"stock-button\">Get Stock Data</button><br>\n    </div>\n  </div>\n  <div class=\"widget-body\" data-id=\"stock-output\"></div>\n</div>");
     };
 
     return Templates;

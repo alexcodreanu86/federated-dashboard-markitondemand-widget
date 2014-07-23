@@ -3,8 +3,8 @@ namespace('Stock')
 class Stock.Controller
   @widgets: []
 
-  @setupWidgetIn: (container, apiKey) ->
-    widget = new Stock.Widgets.Controller(container, apiKey)
+  @setupWidgetIn: (container, apiKey, defaultValue) ->
+    widget = new Stock.Widgets.Controller(container, apiKey, defaultValue)
     widget.initialize()
     @addToWidgetsContainer(widget)
 
@@ -21,8 +21,11 @@ class Stock.Controller
     @allWidgetsExecute("showForm")
 
   @allWidgetsExecute: (command) ->
-    _.each(@widgets, (widget) ->
-      widget[command]()
+    _.each(@widgets, (widget) =>
+      if widget.isActive()
+        widget[command]()
+      else
+        @removeFromWidgetsContainer(widget)
     )
 
   @closeWidgetInContainer: (container) ->
@@ -40,4 +43,3 @@ class Stock.Controller
 
   @removeWidgetContent: (widget) ->
     widget.removeContent()
-

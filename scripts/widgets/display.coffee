@@ -22,4 +22,4 @@ class Stock.Widgets.Display
     $("#{@container} [data-id=stock-form]").show()
 
   removeWidget: ->
-    $("#{@container} [data-id=stock-widget-wrapper]").remove()
+    $(@container).remove()

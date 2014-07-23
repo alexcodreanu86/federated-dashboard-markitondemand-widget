@@ -1,3 +1,8 @@
+container     = '[data-id=widget-container-1]'
+key           = ''
+defaultValue  = 'AAPL GOOG MSFT'
+requestData   = ['AAPL', 'GOOG', 'MSFT']
+
 setupOneContainer = ->
   setFixtures "<div data-id='widget-container-1'></div>"
 
@@ -9,8 +14,8 @@ clickOn = (element) ->
 
 container = "[data-id=widget-container-1]"
 
-newController = (container) ->
-  new Stock.Widgets.Controller(container, "1243")
+newController = (container, value) ->
+  new Stock.Widgets.Controller(container, "1243", value)
 
 mockResponse = {
   Dates: [
@@ -56,15 +61,75 @@ describe "Stock.Widgets.Controller", ->
     controller.initialize()
     expect(spy).toHaveBeenCalled()
 
+  it "initialize is trying to display data for the default value", ->
+    controller = newController(container)
+    spy = spyOn(controller, 'displayDefault')
+    controller.initialize()
+    expect(spy).toHaveBeenCalled()
+
+  it "initialize is setting the widget as active", ->
+    setupOneContainer()
+    controller = newController(container)
+    controller.initialize()
+    expect(controller.isActive()).toBe(true)
+
+  it "displayDefault is loading data when there is a default value", ->
+    controller = newController(container, defaultValue)
+    spy = spyOn(Stock.Widgets.API, 'loadChartData')
+    controller.displayDefault()
+    expect(spy).toHaveBeenCalledWith(requestData, controller.display)
+
+  it "displayDefault doesn't do anything when no default value is provided", ->
+    controller = newController(container)
+    spy = spyOn(Stock.Widgets.API, 'loadChartData')
+    controller.displayDefault()
+    expect(spy).not.toHaveBeenCalled()
+
   it "bind is displaying the stock when the button is clicked", ->
     setupOneContainer()
     controller = newController(container)
     controller.initialize()
-    inputInto('stock-search', 'AAPL GOOG MSFT')
-    spyOn(Stock.Widgets.API,'loadChartData').and.returnValue(controller.display.showChart(mockResponse))
+    inputInto('stock-search', defaultValue)
+    spy = spyOn(Stock.Widgets.API,'loadChartData')
     clickOn("#{container} [data-id=stock-button]")
-    expect($('[data-id=stock-output]')).toContainElement('.highcharts-container')
-    expect(Stock.Widgets.API.loadChartData).toHaveBeenCalled()
+    expect(spy).toHaveBeenCalledWith(requestData, controller.display)
+
+  it "bind removes the widget when close-widget button is clicked", ->
+    setupOneContainer()
+    controller = newController(container)
+    controller.initialize()
+    $("#{container} [data-id=stock-close]").click()
+    expect(container).not.toBeInDOM()
+
+  it 'unbind is unbinding the weather button click processing', ->
+    setupOneContainer()
+    controller = newController(container)
+    controller.initialize()
+    controller.unbind()
+    $("#{container} [data-id=stock-button]").click()
+    expect($('[data-id=stock-output]')).toBeEmpty()
+
+  it "unbind is unbinding close widget button processing", ->
+    setupOneContainer()
+    controller = newController(container)
+    controller.initialize()
+    controller.unbind()
+    $("#{container} [data-id=stock-close]").click()
+    expect($(container)).not.toBeEmpty()
+
+  it 'closeWidget is unbinding the controller', ->
+    setupOneContainer()
+    controller = newController(container)
+    spy = spyOn(controller, 'unbind')
+    controller.closeWidget()
+    expect(spy).toHaveBeenCalled()
+
+  it 'closeWidget is setting the widget as inactive', ->
+    setupOneContainer()
+    controller = newController(container)
+    controller.initialize()
+    controller.closeWidget()
+    expect(controller.isActive()).toBe(false)
 
   it "hideForm is hiding the form", ->
     setupOneContainer()

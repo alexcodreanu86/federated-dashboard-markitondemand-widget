@@ -109,3 +109,12 @@ describe "Stock.Controller", ->
     Stock.Controller.setupWidgetIn(container2, "123456")
     Stock.Controller.closeWidgetInContainer(container1)
     expect(Stock.Controller.getWidgets().length).toEqual(1)
+
+  it "allWidgetsExecute is removing the inactive widgets", ->
+    resetWidgetsContainer()
+    setupTwoContainers()
+    Stock.Controller.setupWidgetIn(container1, "123456")
+    Stock.Controller.setupWidgetIn(container2, "123456")
+    Stock.Controller.widgets[0].setAsInactive()
+    Stock.Controller.allWidgetsExecute('hideForm')
+    expect(Stock.Controller.widgets.length).toBe(1)
