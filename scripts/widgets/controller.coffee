@@ -59,7 +59,7 @@ class Stock.Widgets.Controller
     $("#{@container} [data-id=weather-close]").unbind('click')
 
   hideForm: ->
-    @display.hideForm()
+    @display.exitEditMode()
 
   showForm: ->
-    @display.showForm()
+    @display.enterEditMode()
