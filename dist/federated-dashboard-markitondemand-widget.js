@@ -145,7 +145,7 @@
     function Display() {}
 
     Display.generateLogo = function(config) {
-      return "<i class=\"fa fa-chart-o " + config["class"] + "\" data-id=\"" + config.dataId + "\"></i>";
+      return "<i class=\"fa fa-bar-chart-o " + config["class"] + "\" data-id=\"" + config.dataId + "\"></i>";
     };
 
     return Display;
