@@ -2,11 +2,11 @@ namespace("Stock.Widgets")
 
 class Stock.Widgets.Controller
   apiKey = undefined
-  constructor: (container, key, defaultValue) ->
-    apiKey = key
-    @container = container
-    @display = new Stock.Widgets.Display(container)
-    @defaultValue = defaultValue
+  constructor: (settings) ->
+    apiKey = settings.key
+    @container = settings.container
+    @display = new Stock.Widgets.Display(@container)
+    @defaultValue = settings.defaultValue
     @activeStatus = false
 
   initialize: ->

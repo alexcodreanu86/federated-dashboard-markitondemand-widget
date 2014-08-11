@@ -15,7 +15,7 @@ clickOn = (element) ->
 container = "[data-id=widget-container-1]"
 
 newController = (container, value) ->
-  new Stock.Widgets.Controller(container, "1243", value)
+  new Stock.Widgets.Controller({container: container, key: "1243", defaultValue: value})
 
 mockResponse = {
   Dates: [

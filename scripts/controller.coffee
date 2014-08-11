@@ -3,8 +3,8 @@ namespace('Stock')
 class Stock.Controller
   @widgets: []
 
-  @setupWidgetIn: (container, apiKey, defaultValue) ->
-    widget = new Stock.Widgets.Controller(container, apiKey, defaultValue)
+  @setupWidgetIn: (settings) ->
+    widget = new Stock.Widgets.Controller(settings)
     widget.initialize()
     @addToWidgetsContainer(widget)
 

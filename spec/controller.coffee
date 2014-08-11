@@ -50,6 +50,14 @@ setupTwoContainers = ->
     <div data-id='widget-container-2'></div>
   """
 
+setupTwoWidgetsInContainers = ->
+  setupTwoContainers()
+  setupWidgetInContainer(container1)
+  setupWidgetInContainer(container2)
+
+setupWidgetInContainer = (container) ->
+  Stock.Controller.setupWidgetIn({container: container, key: "123456"})
+
 container1 = "[data-id=widget-container-1]"
 container2 = "[data-id=widget-container-2]"
 
@@ -62,7 +70,7 @@ describe "Stock.Controller", ->
   it "setupWidgetIn is setting up a widget instance in the desired element", ->
     resetWidgetsContainer()
     setSandbox()
-    Stock.Controller.setupWidgetIn('#sandbox', "123456")
+    setupWidgetInContainer('#sandbox')
     html = $('#sandbox')
     expect(html).toContainElement('[name=stock-search]')
     expect(html).toContainElement('[data-id=stock-button]')
@@ -76,18 +84,14 @@ describe "Stock.Controller", ->
 
   it "hideForms is hiding the forms of all the widgets that are initialized", ->
     resetWidgetsContainer()
-    setupTwoContainers()
-    Stock.Controller.setupWidgetIn(container1, "123456")
-    Stock.Controller.setupWidgetIn(container2, "123456")
+    setupTwoWidgetsInContainers()
     Stock.Controller.hideForms()
     expect($("#{container1} [data-id=stock-form]").attr('style')).toEqual('display: none;')
     expect($("#{container2} [data-id=stock-form]").attr('style')).toEqual('display: none;')
 
   it "showForms is showing the forms of all the widgets that are initialized", ->
     resetWidgetsContainer()
-    setupTwoContainers()
-    Stock.Controller.setupWidgetIn(container1, "123456")
-    Stock.Controller.setupWidgetIn(container2, "123456")
+    setupTwoWidgetsInContainers()
     Stock.Controller.hideForms()
     Stock.Controller.showForms()
     expect($("#{container1} [data-id=stock-form]").attr('style')).not.toEqual('display: none;')
@@ -95,26 +99,20 @@ describe "Stock.Controller", ->
 
   it "closeWidgetInContainer will eliminate the widget from the given container", ->
     resetWidgetsContainer()
-    setupTwoContainers()
-    Stock.Controller.setupWidgetIn(container1, "123456")
-    Stock.Controller.setupWidgetIn(container2, "123456")
+    setupTwoWidgetsInContainers()
     Stock.Controller.closeWidgetInContainer(container1)
     expect($("#{container1} [data-id=stock-form]")).not.toBeInDOM()
     expect($("#{container2} [data-id=stock-form]")).toBeInDOM()
 
   it "closeWidgetInContainer will remove the widget from the widgets container", ->
     resetWidgetsContainer()
-    setupTwoContainers()
-    Stock.Controller.setupWidgetIn(container1, "123456")
-    Stock.Controller.setupWidgetIn(container2, "123456")
+    setupTwoWidgetsInContainers()
     Stock.Controller.closeWidgetInContainer(container1)
     expect(Stock.Controller.getWidgets().length).toEqual(1)
 
   it "allWidgetsExecute is removing the inactive widgets", ->
     resetWidgetsContainer()
-    setupTwoContainers()
-    Stock.Controller.setupWidgetIn(container1, "123456")
-    Stock.Controller.setupWidgetIn(container2, "123456")
+    setupTwoWidgetsInContainers()
     Stock.Controller.widgets[0].setAsInactive()
     Stock.Controller.allWidgetsExecute('hideForm')
     expect(Stock.Controller.widgets.length).toBe(1)
