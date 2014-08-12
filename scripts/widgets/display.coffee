@@ -1,8 +1,9 @@
 namespace("Stock.Widget")
 
 class Stock.Widgets.Display
-  constructor: (container) ->
+  constructor: (container, animationSpeed) ->
     @container = container
+    @animationSpeed = animationSpeed
 
   setupWidget: ->
     widgetHtml = Stock.Widgets.Templates.renderForm()
@@ -20,20 +21,20 @@ class Stock.Widgets.Display
     @hideCloseWidget()
 
   hideForm: ->
-    $("#{@container} [data-id=stock-form]").hide()
+    $("#{@container} [data-id=stock-form]").hide(@animationSpeed)
 
   hideCloseWidget: ->
-    $("#{@container} [data-id=stock-close]").hide()
+    $("#{@container} [data-id=stock-close]").hide(@animationSpeed)
 
   enterEditMode: ->
     @showForm()
     @showCloseWidget()
 
   showForm: ->
-    $("#{@container} [data-id=stock-form]").show()
+    $("#{@container} [data-id=stock-form]").show(@animationSpeed)
 
   showCloseWidget: ->
-    $("#{@container} [data-id=stock-close]").show()
+    $("#{@container} [data-id=stock-close]").show(@animationSpeed)
 
   removeWidget: ->
     $(@container).remove()

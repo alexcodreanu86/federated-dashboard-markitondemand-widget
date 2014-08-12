@@ -5,7 +5,7 @@ class Stock.Widgets.Controller
   constructor: (settings) ->
     apiKey = settings.key
     @container = settings.container
-    @display = new Stock.Widgets.Display(@container)
+    @display = new Stock.Widgets.Display(@container, settings.animationSpeed)
     @defaultValue = settings.defaultValue
     @activeStatus = false
 
