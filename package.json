@@ -1,6 +1,6 @@
 {
   "name": "federated-dashboard-markitondemand-widget",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "dependencies": {
     "bower": "~1.3.1"
   },

@@ -82,18 +82,18 @@ describe "Stock.Controller", ->
     Stock.Controller.setupWidgetIn('#sandbox', "123456")
     expect(Stock.Controller.getWidgets().length).toEqual(1)
 
-  it "hideForms is hiding the forms of all the widgets that are initialized", ->
+  it "exitEditMode is hiding the forms of all the widgets that are initialized", ->
     resetWidgetsContainer()
     setupTwoWidgetsInContainers()
-    Stock.Controller.hideForms()
+    Stock.Controller.exitEditMode()
     expect($("#{container1} [data-id=stock-form]").attr('style')).toEqual('display: none;')
     expect($("#{container2} [data-id=stock-form]").attr('style')).toEqual('display: none;')
 
-  it "showForms is showing the forms of all the widgets that are initialized", ->
+  it "enterEditMode is showing the forms of all the widgets that are initialized", ->
     resetWidgetsContainer()
     setupTwoWidgetsInContainers()
-    Stock.Controller.hideForms()
-    Stock.Controller.showForms()
+    Stock.Controller.exitEditMode()
+    Stock.Controller.enterEditMode()
     expect($("#{container1} [data-id=stock-form]").attr('style')).not.toEqual('display: none;')
     expect($("#{container2} [data-id=stock-form]").attr('style')).not.toEqual('display: none;')
 
@@ -114,5 +114,5 @@ describe "Stock.Controller", ->
     resetWidgetsContainer()
     setupTwoWidgetsInContainers()
     Stock.Controller.widgets[0].setAsInactive()
-    Stock.Controller.allWidgetsExecute('hideForm')
+    Stock.Controller.allWidgetsExecute('exitEditMode')
     expect(Stock.Controller.widgets.length).toBe(1)

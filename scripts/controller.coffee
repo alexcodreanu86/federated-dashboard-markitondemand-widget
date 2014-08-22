@@ -14,11 +14,11 @@ class Stock.Controller
   @getWidgets: ->
     @widgets
 
-  @hideForms: ->
-    @allWidgetsExecute("hideForm")
+  @exitEditMode: ->
+    @allWidgetsExecute("exitEditMode")
 
-  @showForms: ->
-    @allWidgetsExecute("showForm")
+  @enterEditMode: ->
+    @allWidgetsExecute("enterEditMode")
 
   @allWidgetsExecute: (command) ->
     _.each(@widgets, (widget) =>

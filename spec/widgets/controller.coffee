@@ -131,19 +131,19 @@ describe "Stock.Widgets.Controller", ->
     controller.closeWidget()
     expect(controller.isActive()).toBe(false)
 
-  it "hideForm is hiding the form", ->
+  it "exitEditMode is hiding the form", ->
     setupOneContainer()
     controller = newController(container)
     controller.initialize()
-    controller.hideForm()
+    controller.exitEditMode()
     expect($("#{container} [data-id=stock-form]").attr('style')).toEqual('display: none;')
 
-  it "showForm is showing the form", ->
+  it "enterEditMode is showing the form", ->
     setupOneContainer()
     controller = newController(container)
     controller.initialize()
-    controller.hideForm()
-    controller.showForm()
+    controller.exitEditMode()
+    controller.enterEditMode()
     expect($("#{container} [data-id=stock-form]").attr('style')).not.toEqual('display: none;')
 
   it "removeContent is removing the widget's content", ->
