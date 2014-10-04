@@ -74,62 +74,8 @@
   Stock.Controller = (function() {
     function Controller() {}
 
-    Controller.widgets = [];
-
     Controller.setupWidgetIn = function(settings) {
-      var widget;
-      widget = new Stock.Widgets.Controller(settings);
-      widget.initialize();
-      return this.addToWidgetsContainer(widget);
-    };
-
-    Controller.addToWidgetsContainer = function(widget) {
-      return this.widgets.push(widget);
-    };
-
-    Controller.getWidgets = function() {
-      return this.widgets;
-    };
-
-    Controller.exitEditMode = function() {
-      return this.allWidgetsExecute("exitEditMode");
-    };
-
-    Controller.enterEditMode = function() {
-      return this.allWidgetsExecute("enterEditMode");
-    };
-
-    Controller.allWidgetsExecute = function(command) {
-      return _.each(this.widgets, (function(_this) {
-        return function(widget) {
-          if (widget.isActive()) {
-            return widget[command]();
-          } else {
-            return _this.removeFromWidgetsContainer(widget);
-          }
-        };
-      })(this));
-    };
-
-    Controller.closeWidgetInContainer = function(container) {
-      var widget;
-      widget = _.filter(this.widgets, function(widget, index) {
-        return widget.container === container;
-      })[0];
-      if (widget) {
-        this.removeWidgetContent(widget);
-        return this.removeFromWidgetsContainer(widget);
-      }
-    };
-
-    Controller.removeFromWidgetsContainer = function(widgetToRemove) {
-      return this.widgets = _.reject(this.widgets, function(widget) {
-        return widget === widgetToRemove;
-      });
-    };
-
-    Controller.removeWidgetContent = function(widget) {
-      return widget.removeContent();
+      return new Stock.Widgets.Controller(settings).initialize();
     };
 
     return Controller;
@@ -266,17 +212,14 @@
       return this.activeStatus;
     };
 
-    Controller.prototype.getContainer = function() {
-      return this.container;
-    };
-
     Controller.prototype.bind = function() {
-      $("" + this.container + " [data-id=stock-button]").click((function(_this) {
-        return function() {
+      $("" + this.container + " [data-name=widget-form]").on('submit', (function(_this) {
+        return function(e) {
+          e.preventDefault();
           return _this.getStockData();
         };
       })(this));
-      return $("" + this.container + " [data-id=stock-close]").click((function(_this) {
+      return $("" + this.container + " [data-name=widget-close]").on('click', (function(_this) {
         return function() {
           return _this.closeWidget();
         };
@@ -310,16 +253,8 @@
     };
 
     Controller.prototype.unbind = function() {
-      $("" + this.container + " [data-id=weather-button]").unbind('click');
-      return $("" + this.container + " [data-id=weather-close]").unbind('click');
-    };
-
-    Controller.prototype.exitEditMode = function() {
-      return this.display.exitEditMode();
-    };
-
-    Controller.prototype.enterEditMode = function() {
-      return this.display.enterEditMode();
+      $("" + this.container + " [data-name=widget-form]").unbind('submit');
+      return $("" + this.container + " [data-name=widget-close]").unbind('click');
     };
 
     return Controller;
@@ -399,39 +334,13 @@
     };
 
     Display.prototype.getInput = function() {
-      return $("" + this.container + " [name=stock-search]").val();
+      return $("" + this.container + " [name=widget-input]").val();
     };
 
     Display.prototype.showChart = function(stockResponse) {
       var formatedResponse;
-      formatedResponse = Stock.Widgets.DataFormater.formatData(stockResponse, "[data-id=stock-output]");
-      return $("" + this.container + " [data-id=stock-output]").highcharts('StockChart', formatedResponse);
-    };
-
-    Display.prototype.exitEditMode = function() {
-      this.hideForm();
-      return this.hideCloseWidget();
-    };
-
-    Display.prototype.hideForm = function() {
-      return $("" + this.container + " [data-id=stock-form]").hide(this.animationSpeed);
-    };
-
-    Display.prototype.hideCloseWidget = function() {
-      return $("" + this.container + " [data-id=stock-close]").hide(this.animationSpeed);
-    };
-
-    Display.prototype.enterEditMode = function() {
-      this.showForm();
-      return this.showCloseWidget();
-    };
-
-    Display.prototype.showForm = function() {
-      return $("" + this.container + " [data-id=stock-form]").show(this.animationSpeed);
-    };
-
-    Display.prototype.showCloseWidget = function() {
-      return $("" + this.container + " [data-id=stock-close]").show(this.animationSpeed);
+      formatedResponse = Stock.Widgets.DataFormater.formatData(stockResponse, "[data-name=widget-output]");
+      return $("" + this.container + " [data-name=widget-output]").highcharts('StockChart', formatedResponse);
     };
 
     Display.prototype.removeWidget = function() {
@@ -451,7 +360,7 @@
     function Templates() {}
 
     Templates.renderForm = function() {
-      return _.template("<div class='widget' data-id=\"stock-widget-wrapper\">\n  <div class='widget-header'>\n    <h2 class=\"widget-title\">Stock</h2>\n    <span class='widget-close' data-id='stock-close'>×</span>\n    <div class=\"widget-form\" data-id=\"stock-form\">\n      <input name=\"stock-search\" type=\"text\">\n      <button data-id=\"stock-button\">Get Stock Data</button><br>\n    </div>\n  </div>\n  <div class=\"widget-body\" data-id=\"stock-output\"></div>\n</div>");
+      return _.template("<div class='widget' data-name='widget-wrapper'>\n  <div class='widget-header' data-name='sortable-handle'>\n    <h2 class=\"widget-title\">Stock</h2>\n    <span class='widget-close' data-name='widget-close'>×</span>\n    <form class='widget-form' data-name='widget-form'>\n      <input name='widget-input' type='text' autofocus='true'>\n      <button data-name=\"form-button\">Get Stock Data</button><br>\n    </form>\n  </div>\n  <div class=\"widget-body\" data-name=\"widget-output\"></div>\n</div>", {});
     };
 
     return Templates;

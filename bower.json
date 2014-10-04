@@ -1,13 +1,12 @@
 {
   "name": "federated-dashboard-markitondemand-widget",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "authors": [
     "Alex Codreanu <alexcodreanu86@gmail.com>"
   ],
   "ignore": [
     "scripts",
-    "spec",
-    ".tmp"
+    "spec"
   ],
   "dependencies": {
     "underscore": "~1.6.0",

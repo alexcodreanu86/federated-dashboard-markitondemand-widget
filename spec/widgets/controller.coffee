@@ -41,110 +41,93 @@ mockResponse = {
 }
 
 describe "Stock.Widgets.Controller", ->
-  it "stores the container that it is initialized with", ->
-    controller = newController(container)
-    expect(controller.getContainer()).toEqual(container)
+  describe '#initialize', ->
+    it "sets widget up in its container", ->
+      setupOneContainer()
+      controller = newController(container)
+      controller.initialize()
+      expect($(container)).not.toBeEmpty()
 
-  it "stores a new instance of Stock.Widget.Display when instantiated", ->
-    controller = newController(container)
-    expect(controller.display).toBeDefined()
+    it "binds the controller", ->
+      controller = newController(container)
+      spy = spyOn(controller, 'bind')
+      controller.initialize()
+      expect(spy).toHaveBeenCalled()
 
-  it "initialize sets widget up in its container", ->
-    setupOneContainer()
-    controller = newController(container)
-    controller.initialize()
-    expect($(container)).not.toBeEmpty()
+    it "tries to display data for the default value", ->
+      controller = newController(container)
+      spy = spyOn(controller, 'displayDefault')
+      controller.initialize()
+      expect(spy).toHaveBeenCalled()
 
-  it "initialize is binding the controller", ->
-    controller = newController(container)
-    spy = spyOn(controller, 'bind')
-    controller.initialize()
-    expect(spy).toHaveBeenCalled()
+    it "sets the widget as active", ->
+      setupOneContainer()
+      controller = newController(container)
+      controller.initialize()
+      expect(controller.isActive()).toBe(true)
 
-  it "initialize is trying to display data for the default value", ->
-    controller = newController(container)
-    spy = spyOn(controller, 'displayDefault')
-    controller.initialize()
-    expect(spy).toHaveBeenCalled()
+  describe '#displayDefault', ->
+    it "loads data when there is a default value", ->
+      controller = newController(container, defaultValue)
+      spy = spyOn(Stock.Widgets.API, 'loadChartData')
+      controller.displayDefault()
+      expect(spy).toHaveBeenCalledWith(requestData, controller.display)
 
-  it "initialize is setting the widget as active", ->
-    setupOneContainer()
-    controller = newController(container)
-    controller.initialize()
-    expect(controller.isActive()).toBe(true)
+    it "does NOT load data when no default value is provided", ->
+      controller = newController(container)
+      spy = spyOn(Stock.Widgets.API, 'loadChartData')
+      controller.displayDefault()
+      expect(spy).not.toHaveBeenCalled()
 
-  it "displayDefault is loading data when there is a default value", ->
-    controller = newController(container, defaultValue)
-    spy = spyOn(Stock.Widgets.API, 'loadChartData')
-    controller.displayDefault()
-    expect(spy).toHaveBeenCalledWith(requestData, controller.display)
+  describe '#bind', ->
+    it "displays the stock when the button is clicked", ->
+      setupOneContainer()
+      controller = newController(container)
+      controller.initialize()
+      $('[name=widget-input]').val(defaultValue)
+      spy = spyOn(Stock.Widgets.API,'loadChartData')
+      clickOn("#{container} [data-name=form-button]")
+      expect(spy).toHaveBeenCalledWith(requestData, controller.display)
 
-  it "displayDefault doesn't do anything when no default value is provided", ->
-    controller = newController(container)
-    spy = spyOn(Stock.Widgets.API, 'loadChartData')
-    controller.displayDefault()
-    expect(spy).not.toHaveBeenCalled()
+    it "removes the widget when close-widget button is clicked", ->
+      setupOneContainer()
+      controller = newController(container)
+      controller.initialize()
+      $("#{container} [data-name=widget-close]").click()
+      expect(container).not.toBeInDOM()
 
-  it "bind is displaying the stock when the button is clicked", ->
-    setupOneContainer()
-    controller = newController(container)
-    controller.initialize()
-    inputInto('stock-search', defaultValue)
-    spy = spyOn(Stock.Widgets.API,'loadChartData')
-    clickOn("#{container} [data-id=stock-button]")
-    expect(spy).toHaveBeenCalledWith(requestData, controller.display)
+  describe '#unbind', ->
+    it 'unbinds the weather button click processing', ->
+      setupOneContainer()
+      controller = newController(container)
+      controller.initialize()
+      spy = spyOn $.prototype, 'unbind'
+      controller.unbind()
+      expect(spy).toHaveBeenCalledWith('submit')
 
-  it "bind removes the widget when close-widget button is clicked", ->
-    setupOneContainer()
-    controller = newController(container)
-    controller.initialize()
-    $("#{container} [data-id=stock-close]").click()
-    expect(container).not.toBeInDOM()
 
-  it 'unbind is unbinding the weather button click processing', ->
-    setupOneContainer()
-    controller = newController(container)
-    controller.initialize()
-    controller.unbind()
-    $("#{container} [data-id=stock-button]").click()
-    expect($('[data-id=stock-output]')).toBeEmpty()
+    it "unbinds close widget button processing", ->
+      setupOneContainer()
+      controller = newController(container)
+      controller.initialize()
+      controller.unbind()
+      $("[data-name=widget-close]").click()
+      expect($(container)).toBeInDOM()
 
-  it "unbind is unbinding close widget button processing", ->
-    setupOneContainer()
-    controller = newController(container)
-    controller.initialize()
-    controller.unbind()
-    $("#{container} [data-id=stock-close]").click()
-    expect($(container)).not.toBeEmpty()
+  describe '#closeWidget', ->
+    it 'unbinds the controller', ->
+      setupOneContainer()
+      controller = newController(container)
+      spy = spyOn(controller, 'unbind')
+      controller.closeWidget()
+      expect(spy).toHaveBeenCalled()
 
-  it 'closeWidget is unbinding the controller', ->
-    setupOneContainer()
-    controller = newController(container)
-    spy = spyOn(controller, 'unbind')
-    controller.closeWidget()
-    expect(spy).toHaveBeenCalled()
-
-  it 'closeWidget is setting the widget as inactive', ->
-    setupOneContainer()
-    controller = newController(container)
-    controller.initialize()
-    controller.closeWidget()
-    expect(controller.isActive()).toBe(false)
-
-  it "exitEditMode is hiding the form", ->
-    setupOneContainer()
-    controller = newController(container)
-    controller.initialize()
-    controller.exitEditMode()
-    expect($("#{container} [data-id=stock-form]").attr('style')).toEqual('display: none;')
-
-  it "enterEditMode is showing the form", ->
-    setupOneContainer()
-    controller = newController(container)
-    controller.initialize()
-    controller.exitEditMode()
-    controller.enterEditMode()
-    expect($("#{container} [data-id=stock-form]").attr('style')).not.toEqual('display: none;')
+    it 'sets the widget as inactive', ->
+      setupOneContainer()
+      controller = newController(container)
+      controller.initialize()
+      controller.closeWidget()
+      expect(controller.isActive()).toBe(false)
 
   it "removeContent is removing the widget's content", ->
     setupOneContainer()

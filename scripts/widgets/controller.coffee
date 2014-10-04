@@ -28,12 +28,11 @@ class Stock.Widgets.Controller
   isActive: ->
     @activeStatus
 
-  getContainer: ->
-    @container
-
   bind: ->
-    $("#{@container} [data-id=stock-button]").click(=> @getStockData())
-    $("#{@container} [data-id=stock-close]").click(=> @closeWidget())
+    $("#{@container} [data-name=widget-form]").on 'submit', (e) =>
+      e.preventDefault()
+      @getStockData()
+    $("#{@container} [data-name=widget-close]").on 'click', => @closeWidget()
 
   getStockData: () ->
     input = @display.getInput()
@@ -55,11 +54,5 @@ class Stock.Widgets.Controller
     @display.removeWidget()
 
   unbind: ->
-    $("#{@container} [data-id=weather-button]").unbind('click')
-    $("#{@container} [data-id=weather-close]").unbind('click')
-
-  exitEditMode: ->
-    @display.exitEditMode()
-
-  enterEditMode: ->
-    @display.enterEditMode()
+    $("#{@container} [data-name=widget-form]").unbind('submit')
+    $("#{@container} [data-name=widget-close]").unbind('click')

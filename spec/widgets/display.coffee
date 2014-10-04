@@ -45,7 +45,7 @@ describe "Stock.Widget.Display", ->
     display = newDisplay(container1)
     setupOneContainer()
     display.setupWidget()
-    expect(container1).toContainElement('.widget .widget-header')
+    expect(container1).toContainElement('[data-name=widget-close]')
 
   it "getInput returns the input in the field in it's own container", ->
     setupTwoContainers()
@@ -53,8 +53,8 @@ describe "Stock.Widget.Display", ->
     display2 = newDisplay(container2)
     display1.setupWidget()
     display2.setupWidget()
-    $("#{container1} [name=stock-search]").val("text1")
-    $("#{container2} [name=stock-search]").val("text2")
+    $("#{container1} [name=widget-input]").val("text1")
+    $("#{container2} [name=widget-input]").val("text2")
     expect(display1.getInput()).toEqual("text1")
     expect(display2.getInput()).toEqual("text2")
 
@@ -63,37 +63,7 @@ describe "Stock.Widget.Display", ->
     setupOneContainer()
     display.setupWidget()
     display.showChart(mockResponse)
-    expect($('[data-id=stock-output]')).toContainElement('.highcharts-container')
-
-  it "exitEditMode is hiding the form", ->
-    setupOneContainer()
-    display = newDisplay(container1)
-    display.setupWidget()
-    display.exitEditMode()
-    expect($("#{container1} [data-id=stock-form]").attr('style')).toEqual('display: none;')
-
-  it "exitEditMode is hiding the form", ->
-    setupOneContainer()
-    display = newDisplay(container1)
-    display.setupWidget()
-    display.exitEditMode()
-    expect($("#{container1} [data-id=stock-close]").attr('style')).toEqual('display: none;')
-
-  it "enterEditMode is showing the form", ->
-    setupOneContainer()
-    display = newDisplay(container1)
-    display.setupWidget()
-    display.exitEditMode()
-    display.enterEditMode()
-    expect($("#{container1} [data-id=stock-form]").attr('style')).not.toEqual('display: none;')
-
-  it "showForm is showing the form", ->
-    setupOneContainer()
-    display = newDisplay(container1)
-    display.setupWidget()
-    display.exitEditMode()
-    display.enterEditMode()
-    expect($("#{container1} [data-id=stock-close]").attr('style')).not.toEqual('display: none;')
+    expect($('[data-name=widget-output]')).toContainElement('.highcharts-container')
 
   it "removeWidget is removing the widget's content", ->
     setupOneContainer()
